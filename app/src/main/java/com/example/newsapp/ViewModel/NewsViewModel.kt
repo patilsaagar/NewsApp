@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsapp.Repository.NewsRepository
 import com.example.newsapp.Utils.ApiState
-import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
@@ -23,8 +22,7 @@ class NewsViewModel @Inject constructor(private val newsRepository: NewsReposito
     }
 
     fun getNews(selectedCategory: String = "Business") = viewModelScope.launch {
-        newsRepository.setNewsCategory(newsCategory = selectedCategory)
-        newsRepository.fetchNewsData()
+        newsRepository.fetchNewsData(newsCategory = selectedCategory)
             .onStart {
                 responseData.value = ApiState.Loading
             }.catch {

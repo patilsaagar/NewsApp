@@ -1,11 +1,11 @@
-package com.example.newsapp.Navigationgraph
+package com.example.newsapp.navigationgraph
 
-import android.util.Log
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavHostController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.newsapp.View.NewsData
 import com.example.newsapp.View.NewsDetails
@@ -18,16 +18,17 @@ sealed class Destination(val route: String) {
 }
 
 @Composable
-fun NavigationHost(navController: NavHostController,
-                   viewModel: NewsViewModel
-) {
-    NavHost(navController, startDestination = "NewsData") {
+fun NavigationHost() {
 
-        composable(route = "NewsData"){
+    val navigationController = rememberNavController()
+    val viewModel: NewsViewModel = viewModel()
+
+    NavHost(navigationController, startDestination = "NewsData") {
+
+        composable(route = Destination.NewsData.route){
             NewsData(viewModel = viewModel,
                 onNavigateToDetailScreen = {
-                    Log.d("1111111", "1111111{$it}")
-                    navController.navigate("${Destination.NewsDetails.route}/$id")
+                    navigationController.navigate("${Destination.NewsDetails.route}/$id")
                 }
             )
         }

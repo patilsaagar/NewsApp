@@ -2,7 +2,8 @@ package com.example.newsapp.View
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.example.newsapp.navigationgraph.NavigationHost
+import androidx.activity.viewModels
+import com.example.newsapp.ViewModel.NewsViewModel
 import com.example.newsapp.ui.theme.NewsAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -14,7 +15,8 @@ class NewsActivity: ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             NewsAppTheme {
-                NavigationHost()
+                val viewModel: NewsViewModel by viewModels()
+                NewsData(viewModel = viewModel)
             }
         }
     }

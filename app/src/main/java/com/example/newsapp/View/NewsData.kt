@@ -1,5 +1,6 @@
 package com.example.newsapp.View
 
+import android.content.Intent
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,14 +14,14 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.newsapp.Utils.ApiState
 import com.example.newsapp.ViewModel.NewsViewModel
 import com.example.newsapp.Model.Source
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewsData(onNavigateToDetailScreen : (String)->Unit ,
-             viewModel: NewsViewModel) {
+fun NewsData(viewModel: NewsViewModel) {
     val newsCategory = listOf("business","entertainment","general","health","science","sports","technology")
     var currentNewsCategoryState by remember { mutableStateOf("business") }
     var scrollableState = rememberScrollState()
@@ -50,20 +51,19 @@ fun NewsData(onNavigateToDetailScreen : (String)->Unit ,
                 }
             }
 
-            GetNewsDataForEachRow(newsViewModel = viewModel, onNavigateToDetailScreen = onNavigateToDetailScreen)
+            GetNewsDataForEachRow(newsViewModel = viewModel)
         }
     }
 }
 
 
 @Composable
-fun GetNewsDataForEachRow(newsViewModel: NewsViewModel,
-                          onNavigateToDetailScreen : (String)->Unit) {
+fun GetNewsDataForEachRow(newsViewModel: NewsViewModel) {
     when(val result = newsViewModel.responseData.value) {
         is ApiState.Success -> {
             LazyColumn() {
                 items(count = result.newsData.count()) {index: Int ->
-                    EachRow(newsSource = result.newsData[index], onNavigateToDetailScreen = onNavigateToDetailScreen)
+                    EachRow(newsSource = result.newsData[index])
                 }
             }
         }
@@ -91,8 +91,7 @@ fun GetNewsDataForEachRow(newsViewModel: NewsViewModel,
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EachRow(
-    newsSource: Source,
-    onNavigateToDetailScreen: (String)->Unit
+    newsSource: Source
 ) {
     val context = LocalContext.current
     Card(
@@ -100,7 +99,11 @@ fun EachRow(
             .padding(horizontal = 8.dp, vertical = 8.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(4.dp),
-        onClick = {  onNavigateToDetailScreen(newsSource.url) }
+        onClick = {
+            val intent = Intent(context, NewsDetails::class.java)
+            intent.putExtra("newsURL", newsSource.url)
+            context.startActivity(intent)
+        }
     ) {
 
         Text(
